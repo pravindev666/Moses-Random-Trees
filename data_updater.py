@@ -82,6 +82,14 @@ def _load(path):
 
 def _save(df, path):
     if df.empty: return
+    # SHIELD: Never let a file shrink by more than 5% unexpectedly 
+    # (prevents accidental wipes of our new historical proxies)
+    if os.path.exists(path):
+        old_df = pd.read_csv(path)
+        if len(df) < len(old_df) * 0.95:
+            print(f"⚠️ Shield Alert: Preventing save to {os.path.basename(path)} (New size {len(df)} < Old size {len(old_df)})")
+            return
+            
     df = df.drop_duplicates(subset=['date']).sort_values('date').reset_index(drop=True)
     df.to_csv(path, index=False)
 
@@ -171,9 +179,30 @@ def _fetch_fii_nse():
         except: continue
     return pd.DataFrame(rows) if rows else None
 
+def _fetch_fii_moneycontrol():
+    """Fallback: MoneyControl FII/DII page scrape"""
+    try:
+        url = "https://www.moneycontrol.com/stocks/marketstats/fii_dii_activity/index.php"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        r = requests.get(url, headers=headers, timeout=15)
+        if r.status_code != 200: return None
+        import re
+        fii_match = re.findall(r'FII/FPI.*?Net Value.*?(-?[\d,]+\.?\d*)', r.text, re.DOTALL)
+        dii_match = re.findall(r'DII.*?Net Value.*?(-?[\d,]+\.?\d*)', r.text, re.DOTALL)
+        if fii_match and dii_match:
+            fn = float(fii_match[0].replace(',',''))
+            dn = float(dii_match[0].replace(',',''))
+            today = pd.Timestamp('today').normalize()
+            return pd.DataFrame([{'date': today, 'fii_net': fn, 'dii_net': dn}])
+    except: pass
+    return None
+
 def update_fii_dii():
     print(f"  FII/DII ... ", end="", flush=True)
     fr = _fetch_fii_nse()
+    if fr is None or fr.empty:
+        print("NSE failed, trying MoneyControl... ", end="", flush=True)
+        fr = _fetch_fii_moneycontrol()
     if fr is None or fr.empty:
         print("failed")
         return
@@ -194,9 +223,26 @@ def _fetch_pcr_nse():
         c_oi += it.get('CE',{}).get('openInterest',0)
     return round(p_oi / c_oi, 4) if c_oi > 0 else None
 
+def _estimate_pcr_from_vix():
+    """Fallback: Estimate PCR from VIX level using historical correlation."""
+    try:
+        vix_df = _load(VIX_DAILY)
+        if vix_df.empty: return None
+        last_vix = float(vix_df.iloc[-1].get('close', 15))
+        if last_vix > 25: pcr = 1.3
+        elif last_vix > 20: pcr = 1.1
+        elif last_vix > 16: pcr = 0.95
+        elif last_vix > 13: pcr = 0.85
+        else: pcr = 0.75
+        return pcr
+    except: return None
+
 def update_pcr():
     print(f"  PCR ... ", end="", flush=True)
     pcr_val = _fetch_pcr_nse()
+    if pcr_val is None:
+        print("NSE failed, estimating from VIX... ", end="", flush=True)
+        pcr_val = _estimate_pcr_from_vix()
     if pcr_val is None:
         pcr_val = 1.0
     today = pd.Timestamp('today').normalize()
