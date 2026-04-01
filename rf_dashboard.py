@@ -178,6 +178,7 @@ def render_rf_dashboard():
     inda_ret       = pred.get("inda_ret", 0)
     epi_ret        = pred.get("epi_ret", 0)
     usdinr_vel     = pred.get("usdinr_vel", 0)
+    exp_range      = pred.get("expected_range_pts", 0)
     ic_upper       = pred.get("iron_condor_upper", r50(spot + exp_range * 0.6))
     ic_lower       = pred.get("iron_condor_lower", r50(spot - exp_range * 0.6))
     last_trained   = metrics.get("last_trained", "—")
@@ -450,9 +451,10 @@ def render_rf_dashboard():
             )
             fig.update_traces(marker_line_width=0)
             st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
-        else:
             st.info("Run rf_trainer.py to generate importance data")
 
+    with col_health:
+        st.markdown('<div class="sec-label">Model Health — Regime Validation</div>', unsafe_allow_html=True)
         # Pull metrics from the 1d horizon which is primary
         h1d = metrics.get("horizons", {}).get("1", {})
         dir_reg = h1d.get("regime_scores", {})

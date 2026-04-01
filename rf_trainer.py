@@ -357,21 +357,21 @@ def build_rf_features():
     df["range_lag2"] = df["true_range"].shift(2)
     df["range_lag3"] = df["true_range"].shift(3)
 
-    # ── NEW TECHNICAL INDICATORS ──────────────────────────────────────────────
-    df["rsi"]         = calculate_rsi(df["close"], 14)
-    df["macd_hist"]   = calculate_macd(df["close"])
+    # ── NEW TECHNICAL INDICATORS (Shifted to prevent lookahead) ───────────────
+    df["rsi"]         = calculate_rsi(df["close"], 14).shift(1)
+    df["macd_hist"]   = calculate_macd(df["close"]).shift(1)
     df["ema20"]       = df["close"].ewm(span=20, adjust=False).mean()
-    df["ema_20_dist"] = (df["close"] - df["ema20"]) / df["ema20"] * 100
+    df["ema_20_dist"] = ((df["close"] - df["ema20"]) / (df["ema20"] + 1e-9) * 100).shift(1)
     
     # Deep Technicals
-    df["adx"]         = calc_adx(df["high"], df["low"], df["close"], 14)
-    df["williams_r"]  = calc_williams_r(df["high"], df["low"], df["close"], 14)
+    df["adx"]         = calc_adx(df["high"], df["low"], df["close"], 14).shift(1)
+    df["williams_r"]  = calc_williams_r(df["high"], df["low"], df["close"], 14).shift(1)
     
-    # Keltner Channels (using previously calculated ema20 and atr20 via mean)
-    df["atr20"]       = df["true_range"].rolling(20).mean()
-    df["keltner_u"]   = df["ema20"] + 2 * df["atr20"]
-    df["keltner_l"]   = df["ema20"] - 2 * df["atr20"]
-    df["kc_width"]    = (df["keltner_u"] - df["keltner_l"]) / (df["ema20"] + 1e-9)
+    # Keltner Channels 
+    df["atr20"]       = df["true_range"].rolling(20).mean().shift(1)
+    df["keltner_u"]   = df["ema20"].shift(1) + 2 * df["atr20"]
+    df["keltner_l"]   = df["ema20"].shift(1) - 2 * df["atr20"]
+    df["kc_width"]    = ((df["keltner_u"] - df["keltner_l"]) / (df["ema20"].shift(1) + 1e-9)).shift(1)
 
     # ── Multi-Horizon Direction Targets ───────────────────────────────────────
     for h in HORIZONS:
@@ -401,6 +401,7 @@ def build_rf_features():
 # ── REGIME VALIDATION ──────────────────────────────────────────────────────────
 def validate_across_regimes(model, df, feature_cols, target_col, task="clf"):
     """Run the model on each of the 3 regime splits. Returns dict of scores."""
+    from sklearn.base import clone
     scores = {}
     for t_end, v_end in SPLITS:
         train = df[df["date"] < t_end]
@@ -413,12 +414,14 @@ def validate_across_regimes(model, df, feature_cols, target_col, task="clf"):
         Xt = train[feats]; yt = train[target_col]
         Xv = val[feats];   yv = val[target_col]
 
-        model.fit(Xt, yt)
+        # Use clone to avoid modifying the main model in-place (Refit Bug)
+        m = clone(model)
+        m.fit(Xt, yt)
         if task == "clf":
-            preds = model.predict(Xv)
+            preds = m.predict(Xv)
             scores[f"{t_end[:4]}-{v_end[:4]}"] = round(accuracy_score(yv, preds), 4)
         else:
-            preds = model.predict(Xv)
+            preds = m.predict(Xv)
             scores[f"{t_end[:4]}-{v_end[:4]}"] = round(mean_absolute_error(yv, preds), 1)
 
     return scores
@@ -488,12 +491,18 @@ def train_multi_horizon_dir(df):
         fname = f"rf_dir_{h}d.pkl"
         joblib.dump(best_rf, os.path.join(MODEL_DIR, fname))
         
-        # Feature importance for this specific horizon
+        # Feature importance
         importance = pd.DataFrame({
             "feature": feats,
             "importance": best_rf.feature_importances_
         }).sort_values("importance", ascending=False)
+        
+        # Save specific horizon importance
         importance.to_csv(os.path.join(MODEL_DIR, f"rf_dir_{h}d_importance.csv"), index=False)
+        
+        # IF this is 1d, save it as the primary 'direction' importance for the dashboard
+        if h == 1:
+            importance.to_csv(os.path.join(MODEL_DIR, "rf_direction_importance.csv"), index=False)
 
         results[str(h)] = {
             "best_params": best_params,
@@ -534,97 +543,6 @@ def train_optimized_range(df):
 
 
 # ── STRATEGY & RATIONALE ENGINE ───────────────────────────────────────────────
-def _pick_moses_strategy(prob, spot, atr10):
-    """
-    MOSES ADAPTIVE STRATEGY MATRIX (10-Year Optimal Mapping)
-    Synchronized with JUDAH logic.
-    """
-    # ── 1. Calculate Strike Levels ──────────────────────────────────────────
-    atm_strike = int(round(spot / 50) * 50)
-    buffer = atr10 * 1.2
-    bull_put_sell = int(round((spot - buffer) / 50) * 50)
-    bear_call_sell = int(round((spot + buffer) / 50) * 50)
-
-    # ── 2. WEALTH GENERATION: Sniper Trend (DOWN) ──────────────────────────
-    if prob < 0.35:
-        return {
-            "strategy": "Naked Put (PE)",
-            "action": "BUY PUT (ATM)",
-            "premium": "DEBIT",
-            "size": "HALF",
-            "source": "MOSES RF",
-            "why": f"High Conviction DOWN ({100-prob*100:.1f}%). Moses detects a sharp breakdown. Buying ATM Puts for max alpha.",
-            "strikes": {"Buy PE (ATM)": f"{atm_strike:,}"},
-            "color": "red",
-            "edge": "68.5% (Historical)"
-        }
-
-    # ── 3. THE BREAD & BUTTER: Standard Trend (55-65%) ──────────────────────
-    if 0.35 <= prob < 0.45:
-        return {
-            "strategy": "Bear Call Spread",
-            "action": "SELL CALLS (Income)",
-            "premium": "CREDIT",
-            "size": "FULL",
-            "source": "MOSES RF",
-            "why": f"Standard DOWN bias ({100-prob*100:.1f}%). Using Bear Call Spread for steady income.",
-            "strikes": {"Sell CE": f"{bear_call_sell:,}", "Buy CE": f"{bear_call_sell+100:,}"},
-            "color": "red",
-            "edge": "78.4% (Sync)"
-        }
-
-    if 0.55 <= prob < 0.65:
-        return {
-            "strategy": "Bull Put Spread",
-            "action": "SELL PUTS (Income)",
-            "premium": "CREDIT",
-            "size": "FULL",
-            "source": "MOSES RF",
-            "why": f"Standard UP bias ({prob*100:.1f}%). Bread & Butter income setup via Bull Put Spread.",
-            "strikes": {"Sell PE": f"{bull_put_sell:,}", "Buy PE": f"{bull_put_sell-100:,}"},
-            "color": "green",
-            "edge": "78.4% (Sync)"
-        }
-
-    # ── 4. WEALTH GENERATION: Sniper Trend (UP) ─────────────────────────────
-    if prob >= 0.65:
-        return {
-            "strategy": "Naked Call (CE)",
-            "action": "BUY CALL (ATM)",
-            "premium": "DEBIT",
-            "size": "HALF",
-            "source": "MOSES RF",
-            "why": f"High Conviction UP ({prob*100:.1f}%). Moses detects trend expansion. Buying ATM Calls.",
-            "strikes": {"Buy CE (ATM)": f"{atm_strike:,}"},
-            "color": "green",
-            "edge": "72.1% (Historical)"
-        }
-
-    # ── 5. NEUTRAL / LOCKOUT (45-55%) ───────────────────────────────────────
-    if 0.48 <= prob <= 0.52:
-        return {
-            "strategy": "Iron Condor",
-            "action": "COLLECT DECAY",
-            "premium": "CREDIT",
-            "size": "HALF",
-            "source": "THETA",
-            "why": "Moses detects sideways chop. Collecting premium from both wings.",
-            "strikes": {"Sell CE": f"{bear_call_sell:,}", "Sell PE": f"{bull_put_sell:,}"},
-            "color": "yellow",
-            "edge": "82.5% (Historical)"
-        }
-
-    return {
-        "strategy": "No Trade",
-        "action": "SIDE-LINES",
-        "premium": "CASH",
-        "size": "ZERO",
-        "source": "SAFETY",
-        "why": f"Moses probability ({prob:.2f}) is too close to 50/50. Waiting for confirmation.",
-        "strikes": {"Nifty": "WAIT"},
-        "color": "red",
-        "risk": "NONE — Capital preserved."
-    }
 
 def generate_rationale(pred_dict, dir_imp, range_imp):
     """
@@ -665,48 +583,43 @@ def generate_rationale(pred_dict, dir_imp, range_imp):
     return scenario, rationale
 
 def get_actionable_strategy(pred_dict):
-    """Map model outputs to specific options strategies."""
+    """
+    MOSES ADAPTIVE STRATEGY MATRIX (Official README Thresholds)
+    Maps probability to 10-year optimized trade structures.
+    """
     prob = pred_dict["up_prob"]
-    vix = pred_dict["vix"]
+    vix  = pred_dict["vix"]
     spot = pred_dict["spot"]
     rng  = pred_dict["expected_range_pts"]
+    
+    # Strike rounding
+    atm_strike = int(round(spot / 50) * 50)
+    ic_upper   = pred_dict["iron_condor_upper"]
+    ic_lower   = pred_dict["iron_condor_lower"]
 
+    # 1. EXTREME VOLATILITY LOCKOUT
     if vix > 25:
-        return "Long Straddle/Strangle", "Buy ATM Call + Buy ATM Put", "Extreme Volatility"
-    
-    if prob > 0.62:
-        # Bullish
-        buy_strike = round(spot / 50) * 50
-        sell_strike = round((spot + rng*0.5) / 50) * 50
-        if sell_strike <= buy_strike: sell_strike += 100
-        return "Bull Put Spread", f"Sell {buy_strike} PE, Buy {buy_strike-100} PE", "Directional UP"
-    
-    if prob < 0.38:
-        # Bearish
-        buy_strike = round(spot / 50) * 50
-        sell_strike = round((spot - rng*0.5) / 50) * 50
-        if sell_strike >= buy_strike: sell_strike -= 100
-        return "Bear Call Spread", f"Sell {buy_strike} CE, Buy {buy_strike+100} CE", "Directional DOWN"
-    
-    # Neutral / Low Conviction
-    upper = pred_dict["iron_condor_upper"]
-    lower = pred_dict["iron_condor_lower"]
-    return "Iron Condor", f"Sell {upper} CE & {lower} PE (Wings: {upper+100}/{lower-100})", "Range Bound"
+        return "Long Straddle", f"Buy ATM CE & PE at {atm_strike}", "Volatility Spike"
 
-# ── LIVE PREDICTION ───────────────────────────────────────────────────────────
-def get_todays_prediction(df, dir_model, range_model):
-    """Get prediction for the next trading day using today's data."""
-    latest = df.iloc[-1]
+    # 2. HIGH CONVICTION (Naked Options / Fast Growth)
+    if prob >= 0.65:
+        return "Naked Call (CE)", f"Buy {atm_strike} CE", "Bullish Sniper"
+    if prob <= 0.35:
+        return "Naked Put (PE)", f"Buy {atm_strike} PE", "Bearish Sniper"
 
-    dir_feats   = [c for c in DIRECTION_FEATURES if c in df.columns]
-    range_feats = [c for c in RANGE_FEATURES if c in df.columns]
+    # 3. STEADY INCOME (Credit Spreads)
+    if 0.55 <= prob < 0.65:
+        return "Bull Put Spread", f"Sell {ic_lower} PE, Buy {ic_lower-100} PE", "Steady Income UP"
+    if 0.35 < prob <= 0.45:
+        return "Bear Call Spread", f"Sell {ic_upper} CE, Buy {ic_upper+100} CE", "Steady Income DOWN"
 
-    X_dir   = latest[dir_feats].values.reshape(1, -1)
-    X_range = latest[range_feats].values.reshape(1, -1)
+    # 4. THETA DECAY (Iron Condors)
+    if 0.48 <= prob <= 0.52:
+        return "Iron Condor", f"Sell {ic_upper} CE & {ic_lower} PE", "Range Bound"
 
-    # Direction
-    dir_proba  = dir_model.predict_proba(X_dir)[0]
-    up_prob    = float(dir_proba[1])
+    # 5. NO TRADE ZONE (Safety First)
+    return "No Trade", "Side-lines (Waiting for Confirmation)", "Low Conviction"
+
 def get_todays_prediction(df, range_model):
     """
     Get multi-horizon prediction consensus.
