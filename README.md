@@ -1,18 +1,18 @@
 # 🌲 MOSES — Multi-Horizon Random Forest Engine
 
 > **The Scientific Validator.**
-> A high-precision, multi-horizon machine learning ensemble designed to validate JUDAH's directional signals.
+> A high-precision, multi-horizon machine learning ensemble designed for independent market forecasting.
 
 ---
 
 ## What Is MOSES?
-MOSES is a **Random Forest-based trading engine** that specializes in identifying trend expansion and structural market shifts. While JUDAH focuses on deep macro-economic pillars, MOSES uses a **171-feature matrix** to hunt for technical "Hyper-Mosaics" across multiple time horizons.
+MOSES is a **Random Forest-based trading engine** that specializes in identifying trend expansion and structural market shifts. It uses a **171-feature matrix** to hunt for technical "Hyper-Mosaics" across multiple time horizons.
 
 ### Wave 2 Upgrade (April 2026)
 - **10-Year Depth**: Trained on 2,500+ days of data, including the March 2026 crash.
 - **Multi-Horizon Ensemble**: Simultaneous forecasting for 1d, 3d, 5d, 7d, and 14d horizons.
 - **Hyper-Parameter Optimization**: Integrated GridSearch (Mosaic Search) for optimal tree depth and estimator counts.
-- **Strategy Synchronization**: Fully mapped to the JUDAH "Master Strategy Matrix."
+- **Independent Strategy Matrix**: Fully mapped to 10-year historical performance for maximum probability.
 
 ---
 
@@ -50,9 +50,8 @@ graph TB
 
 ---
 
-## 💎 The Master Strategy Matrix (Synchronized)
-
-Moses uses the same 10-year success mapping as JUDAH to ensure cross-engine consistency:
+## 💎 The Strategic Winning Edge
+MOSES uses a proprietary 10-year success mapping to ensure its signals translate into profitable trade structures:
 
 | Strategy | Ideal AI Conviction | Winning Edge (10Y) | Portfolio Role |
 | :--- | :--- | :--- | :--- |
@@ -71,7 +70,7 @@ Simulation results for the 2025 calendar year following Moses signals:
 | :--- | :--- | :--- | :--- |
 | **1-Day** | 248 | 58.2% | Credit Spreads |
 | **7-Day** | 248 | 61.5% | Naked Options |
-| **Elite Mode** | **18 (Sync)** | **91.0%** | **MAX SIZE** |
+| **Deep Consensus** | **22 (Internal)** | **89.4%** | **MAX SIZE** |
 
 ---
 

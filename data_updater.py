@@ -201,7 +201,7 @@ def update_pcr():
         pcr_val = 1.0
     today = pd.Timestamp('today').normalize()
     ex = _load(PCR); fr = pd.DataFrame([{'date':today,'pcr':pcr_val}]); cm = _append(ex, fr); _save(cm, PCR)
-    print(f"PCR={pcr_val:.3f}  +{len(cm)-len(ex)} rows")
+    print(f"PCR={pcr_val:.3f}  +{len(cm)-len(ex)} total rows")
 
 def rebuild_nifty_daily():
     print(f"  Rebuilding nifty_daily ... ", end="", flush=True)
@@ -237,10 +237,15 @@ def update_fundamentals():
         pe = 22.0
     today = pd.Timestamp('today').normalize()
     ex = _load(FUNDAMENTALS)
+    
+    # Use trailing fallback if live fetch fails
+    if pe == 22.0 and not ex.empty:
+        pe = float(ex.iloc[-1]['pe_ratio'])
+        
     fr = pd.DataFrame([{'date':today, 'pe_ratio':pe}])
     cm = _append(ex, fr)
     _save(cm, FUNDAMENTALS)
-    print(f"PE={pe}  +{len(cm)-len(ex)} rows")
+    print(f"PE={pe:.2f}  +{len(cm)-len(ex)} total rows")
 
 
 def run_update():

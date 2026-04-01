@@ -78,6 +78,7 @@ SHANGHAI_CSV  = os.path.join(DATA_DIR, "shanghai_daily.csv")
 USTNX_CSV     = os.path.join(DATA_DIR, "us10y_daily.csv")
 SILVER_CSV    = os.path.join(DATA_DIR, "silver_daily.csv")
 NATGAS_CSV    = os.path.join(DATA_DIR, "natgas_daily.csv")
+FUND_CSV      = os.path.join(DATA_DIR, "fundamentals.csv")
 
 # ── REGIME SPLITS (same logic as offline_grid_trainer.py) ────────────────────
 SPLITS = [
@@ -124,7 +125,8 @@ DIRECTION_FEATURES = [
     'shanghai_ret', 'shanghai_rsi', 'shanghai_macd',
     'us10y_ret', 'us10y_rsi', 'us10y_macd',
     'silver_ret', 'silver_rsi', 'silver_macd',
-    'natgas_ret', 'natgas_rsi', 'natgas_macd'
+    'natgas_ret', 'natgas_rsi', 'natgas_macd',
+    'pe_ratio'
 ]
 
 RANGE_FEATURES = [
@@ -250,6 +252,14 @@ def build_rf_features():
         df["usdinr"] = 83.0
         df["usdinr_ret"] = 0.0
         df["usdinr_vel"] = 0.0
+
+    # ── FUNDAMENTALS (Valuation) ─────────────────────────────────────────────
+    fund = _load(FUND_CSV)
+    if not fund.empty:
+        df = df.merge(fund[["date", "pe_ratio"]], on="date", how="left")
+        df["pe_ratio"] = df["pe_ratio"].ffill().fillna(22.5)
+    else:
+        df["pe_ratio"] = 22.5
 
     # ── Institutional Proxies (INDA/EPI/EEM — Deep Technicals) ─────────────
     for etf_path, etf_px in [(INDA_CSV, "inda"), (EPI_CSV, "epi"), (EEM_CSV, "eem")]:

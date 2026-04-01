@@ -1,0 +1,29 @@
+name: Moses Weekly Grid Training
+on:
+  schedule:
+    # Every Sunday at 6pm IST (12:30 UTC)
+    - cron: '30 12 * * 0'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Retrain RF
+        run: python rf_trainer.py
+      - name: Commit Model
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/models/*.pkl
+          git commit -m "🌲 Moses Hyper-Mosaic Retrain [$(date -u +%Y-%m-%dT%H:%M:%SZ)]" || exit 0
+          git pull --rebase --autostash origin main
+          git push
