@@ -198,8 +198,14 @@ def render_rf_dashboard():
     pred       = metrics.get("todays_prediction", {})
     intensity  = metrics.get("search_intensity", "Standard")
     short_term_v = pred.get("direction", "NEUTRAL")
-    short_term_c = pred.get("confidence", 0.5)
+    short_term_c = pred.get("conviction", pred.get("confidence", 0.5))
     spot       = nifty.get("spot", 22000)
+    
+    exp_range  = pred.get("expected_range_pts", 0)
+    ic_upper   = pred.get("iron_condor_upper", r50(spot + exp_range * 0.6))
+    ic_lower   = pred.get("iron_condor_lower", r50(spot - exp_range * 0.6))
+    rm         = metrics.get("range_model", {})
+    last_trained = metrics.get("last_trained", "—")
     
     # Consensus Extraction
     horizons   = metrics.get("horizons", {})
@@ -384,7 +390,7 @@ def render_rf_dashboard():
                        range=[low_est - 200, high_est + 200]),
             yaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
         )
-        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
 
         # IC wing table
         ic_cols = st.columns(4)
@@ -436,7 +442,7 @@ def render_rf_dashboard():
         else:
             st.dataframe(
                 pd.DataFrame(rows),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 height=180,
             )
@@ -472,7 +478,7 @@ def render_rf_dashboard():
                            tickfont=dict(size=10, family="JetBrains Mono", color="#7a82a0")),
             )
             fig.update_traces(marker_line_width=0)
-            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
         else:
             st.info("Run rf_trainer.py to generate importance data")
 
@@ -495,7 +501,7 @@ def render_rf_dashboard():
                            tickfont=dict(size=10, family="JetBrains Mono", color="#7a82a0")),
             )
             fig.update_traces(marker_line_width=0)
-            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
             st.info("Run rf_trainer.py to generate importance data")
 
     with col_health:
@@ -517,7 +523,7 @@ def render_rf_dashboard():
             })
 
         if rows:
-            st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True, height=200)
+            st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True, height=200)
 
         st.markdown(f"""
         <div style="font-size:0.65rem; color:#4a5270; margin-top:8px; line-height:1.7;">
