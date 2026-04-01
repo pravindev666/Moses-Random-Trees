@@ -1,0 +1,58 @@
+name: Moses RF Pipeline
+
+on:
+  schedule:
+    # Every 30 minutes during IST market hours (Mon-Fri, 9:00-15:30 IST = 3:30-10:00 UTC)
+    - cron: '*/30 3-10 * * 1-5'
+  workflow_dispatch:   # Manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Update market data
+        run: python data_updater.py
+        env:
+          PYTHONUNBUFFERED: '1'
+
+      - name: Clean data (Remove merge markers)
+        run: python clean_data.py
+        env:
+          PYTHONUNBUFFERED: '1'
+
+      - name: Retrain Random Forest models
+        run: python rf_trainer.py
+        env:
+          PYTHONUNBUFFERED: '1'
+
+      - name: Check for changes
+        id: check
+        run: |
+          git diff --quiet data/ || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git commit -m "🌲 Moses Auto-Retrain [$(date -u +%Y-%m-%dT%H:%M:%SZ)]" || echo "No changes to commit"
+          git pull --rebase --autostash origin main
+          git push

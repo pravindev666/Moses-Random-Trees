@@ -1,0 +1,151 @@
+{
+  "last_trained": "2026-04-01 02:59:09",
+  "search_intensity": "Comprehensive (GridSearch + TimeSeriesSplit)",
+  "horizons": {
+    "1": {
+      "best_params": {
+        "max_depth": 8,
+        "max_features": "sqrt",
+        "min_samples_leaf": 10,
+        "n_estimators": 100
+      },
+      "cv_accuracy": 0.5317,
+      "regime_scores": {
+        "2019-2021": 0.501,
+        "2022-2023": 0.4449,
+        "2024-2026": 0.4877
+      },
+      "top_feature": "nifty_ret",
+      "model_file": "rf_dir_1d.pkl"
+    },
+    "3": {
+      "best_params": {
+        "max_depth": 12,
+        "max_features": "sqrt",
+        "min_samples_leaf": 10,
+        "n_estimators": 200
+      },
+      "cv_accuracy": 0.5292,
+      "regime_scores": {
+        "2019-2021": 0.5811,
+        "2022-2023": 0.5184,
+        "2024-2026": 0.5123
+      },
+      "top_feature": "itc_macd",
+      "model_file": "rf_dir_3d.pkl"
+    },
+    "5": {
+      "best_params": {
+        "max_depth": 15,
+        "max_features": "sqrt",
+        "min_samples_leaf": 10,
+        "n_estimators": 100
+      },
+      "cv_accuracy": 0.5465,
+      "regime_scores": {
+        "2019-2021": 0.5729,
+        "2022-2023": 0.4939,
+        "2024-2026": 0.4918
+      },
+      "top_feature": "pharma_macd",
+      "model_file": "rf_dir_5d.pkl"
+    },
+    "7": {
+      "best_params": {
+        "max_depth": 5,
+        "max_features": "sqrt",
+        "min_samples_leaf": 30,
+        "n_estimators": 300
+      },
+      "cv_accuracy": 0.5668,
+      "regime_scores": {
+        "2019-2021": 0.5791,
+        "2022-2023": 0.5469,
+        "2024-2026": 0.5144
+      },
+      "top_feature": "fmcg_adx",
+      "model_file": "rf_dir_7d.pkl"
+    },
+    "14": {
+      "best_params": {
+        "max_depth": 8,
+        "max_features": "sqrt",
+        "min_samples_leaf": 10,
+        "n_estimators": 200
+      },
+      "cv_accuracy": 0.5618,
+      "regime_scores": {
+        "2019-2021": 0.653,
+        "2022-2023": 0.4204,
+        "2024-2026": 0.5288
+      },
+      "top_feature": "epi_adx",
+      "model_file": "rf_dir_14d.pkl"
+    }
+  },
+  "range_model": {
+    "best_params": {
+      "max_depth": 8,
+      "max_features": 0.6,
+      "min_samples_leaf": 30,
+      "n_estimators": 150
+    },
+    "regime_mae_pts": {
+      "2019-2021": 62.3,
+      "2022-2023": 58.2,
+      "2024-2026": 78.7
+    },
+    "top_feature": "atr10"
+  },
+  "todays_prediction": {
+    "date": "2026-03-30",
+    "spot": 22379.19921875,
+    "direction": "UP",
+    "up_prob": 0.532,
+    "down_prob": 0.468,
+    "expected_range_pts": 341.0,
+    "iron_condor_upper": 22600,
+    "iron_condor_lower": 22150,
+    "vix": 27.89,
+    "pcr": 1.3,
+    "inda_ret": -0.0169,
+    "epi_ret": -0.0129,
+    "bn_vs_nifty": -0.0183,
+    "usdinr_vel": 1.063,
+    "rsi": 23.68,
+    "macd_hist": -134.2565,
+    "ema_20_dist": -6.149,
+    "horizons": {
+      "1": {
+        "direction": "UP",
+        "up_prob": 0.532,
+        "conviction": 0.532
+      },
+      "3": {
+        "direction": "UP",
+        "up_prob": 0.569,
+        "conviction": 0.569
+      },
+      "5": {
+        "direction": "UP",
+        "up_prob": 0.603,
+        "conviction": 0.603
+      },
+      "7": {
+        "direction": "UP",
+        "up_prob": 0.561,
+        "conviction": 0.561
+      },
+      "14": {
+        "direction": "UP",
+        "up_prob": 0.64,
+        "conviction": 0.64
+      }
+    },
+    "recommended_strategy": "Long Straddle/Strangle",
+    "recommended_strikes": "Buy ATM Call + Buy ATM Put",
+    "strategy_tag": "Extreme Volatility",
+    "scenario": "High Volatility Regime",
+    "rationale": "Model identifies a 'High Volatility Regime' scenario. Primary driver is 'nifty_ret', signaling upward pressure with 53.2% conviction. High VIX (27.9) suggests wide swings; defensive hedging via wider strikes is advised."
+  }
+}
