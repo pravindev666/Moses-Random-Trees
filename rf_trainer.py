@@ -808,7 +808,8 @@ def main():
     print(f"   Scenario:  {pred['scenario']}")
     print(f"   Verdict:   {pred['direction']} ({max(pred['up_prob'], pred['down_prob']):.1%} prob)")
     print(f"   Strategy:  {pred['recommended_strategy']}")
-    print(f"   Consensus: {' | '.join([f'{h}d:{v['direction']}' for h,v in pred['horizons'].items()])}")
+    consensus = " | ".join([f"{h}d:{v['direction']}" for h, v in pred['horizons'].items()])
+    print(f"   Consensus: {consensus}")
 
     # 4. SAVE COMPREHENSIVE METRICS
     metrics = {
