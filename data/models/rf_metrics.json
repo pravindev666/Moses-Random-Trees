@@ -1,53 +1,53 @@
 {
-  "last_trained": "2026-05-17 14:30:14",
+  "last_trained": "2026-05-24 14:32:01",
   "search_intensity": "Comprehensive (GridSearch + TimeSeriesSplit)",
   "horizons": {
     "1": {
       "best_params": {
-        "max_depth": 5,
+        "max_depth": 15,
         "max_features": "sqrt",
-        "min_samples_leaf": 20,
-        "n_estimators": 100
+        "min_samples_leaf": 10,
+        "n_estimators": 300
       },
-      "cv_accuracy": 0.5406,
+      "cv_accuracy": 0.5295,
       "regime_scores": {
-        "2019-2021": 0.5072,
-        "2022-2023": 0.449,
-        "2024-2026": 0.4712
+        "2019-2021": 0.5195,
+        "2022-2023": 0.4367,
+        "2024-2026": 0.4794
       },
       "top_feature": "nifty_ret",
       "model_file": "rf_dir_1d.pkl"
     },
     "3": {
       "best_params": {
-        "max_depth": 12,
+        "max_depth": 15,
         "max_features": "sqrt",
-        "min_samples_leaf": 10,
-        "n_estimators": 200
+        "min_samples_leaf": 30,
+        "n_estimators": 300
       },
-      "cv_accuracy": 0.5401,
+      "cv_accuracy": 0.5422,
       "regime_scores": {
-        "2019-2021": 0.5873,
-        "2022-2023": 0.4776,
-        "2024-2026": 0.5103
+        "2019-2021": 0.6016,
+        "2022-2023": 0.5347,
+        "2024-2026": 0.5123
       },
-      "top_feature": "itc_macd",
+      "top_feature": "hsi_macd",
       "model_file": "rf_dir_3d.pkl"
     },
     "5": {
       "best_params": {
-        "max_depth": 12,
+        "max_depth": 8,
         "max_features": "sqrt",
-        "min_samples_leaf": 20,
-        "n_estimators": 100
+        "min_samples_leaf": 10,
+        "n_estimators": 300
       },
-      "cv_accuracy": 0.542,
+      "cv_accuracy": 0.5383,
       "regime_scores": {
         "2019-2021": 0.5811,
-        "2022-2023": 0.4735,
-        "2024-2026": 0.5103
+        "2022-2023": 0.4816,
+        "2024-2026": 0.4918
       },
-      "top_feature": "epi_adx",
+      "top_feature": "itc_macd",
       "model_file": "rf_dir_5d.pkl"
     },
     "7": {
@@ -57,7 +57,7 @@
         "min_samples_leaf": 10,
         "n_estimators": 100
       },
-      "cv_accuracy": 0.5684,
+      "cv_accuracy": 0.572,
       "regime_scores": {
         "2019-2021": 0.5606,
         "2022-2023": 0.5429,
@@ -73,19 +73,19 @@
         "min_samples_leaf": 10,
         "n_estimators": 300
       },
-      "cv_accuracy": 0.5753,
+      "cv_accuracy": 0.5759,
       "regime_scores": {
         "2019-2021": 0.6694,
         "2022-2023": 0.4245,
         "2024-2026": 0.5391
       },
-      "top_feature": "epi_adx",
+      "top_feature": "vix",
       "model_file": "rf_dir_14d.pkl"
     }
   },
   "range_model": {
     "best_params": {
-      "max_depth": 5,
+      "max_depth": 8,
       "max_features": 0.6,
       "min_samples_leaf": 30,
       "n_estimators": 150
@@ -98,54 +98,54 @@
     "top_feature": "atr10"
   },
   "todays_prediction": {
-    "date": "2026-05-15",
-    "spot": 23626.05078125,
+    "date": "2026-05-22",
+    "spot": 23748.849609375,
     "direction": "DOWN",
-    "up_prob": 0.441,
-    "down_prob": 0.559,
-    "expected_range_pts": 281.0,
-    "iron_condor_upper": 23800,
-    "iron_condor_lower": 23450,
-    "vix": 18.47,
+    "up_prob": 0.423,
+    "down_prob": 0.577,
+    "expected_range_pts": 230.0,
+    "iron_condor_upper": 23900,
+    "iron_condor_lower": 23600,
+    "vix": 18.39,
     "pcr": 0.95,
-    "inda_ret": 0.0097,
-    "epi_ret": 0.0093,
-    "bn_vs_nifty": 0.0021,
-    "usdinr_vel": 0.982,
-    "rsi": 40.99,
-    "macd_hist": -62.8196,
-    "ema_20_dist": -0.899,
+    "inda_ret": 0.0159,
+    "epi_ret": 0.0157,
+    "bn_vs_nifty": 0.0039,
+    "usdinr_vel": 0.41,
+    "rsi": 39.34,
+    "macd_hist": -34.0373,
+    "ema_20_dist": -0.697,
     "horizons": {
       "1": {
         "direction": "DOWN",
-        "up_prob": 0.441,
-        "conviction": 0.559
+        "up_prob": 0.423,
+        "conviction": 0.577
       },
       "3": {
         "direction": "DOWN",
-        "up_prob": 0.338,
-        "conviction": 0.662
+        "up_prob": 0.457,
+        "conviction": 0.543
       },
       "5": {
         "direction": "DOWN",
-        "up_prob": 0.368,
-        "conviction": 0.632
+        "up_prob": 0.398,
+        "conviction": 0.602
       },
       "7": {
         "direction": "DOWN",
-        "up_prob": 0.257,
-        "conviction": 0.743
+        "up_prob": 0.342,
+        "conviction": 0.658
       },
       "14": {
         "direction": "DOWN",
-        "up_prob": 0.223,
-        "conviction": 0.777
+        "up_prob": 0.338,
+        "conviction": 0.662
       }
     },
     "recommended_strategy": "Bear Call Spread",
-    "recommended_strikes": "Sell 23800 CE, Buy 23900 CE",
+    "recommended_strikes": "Sell 23900 CE, Buy 24000 CE",
     "strategy_tag": "Steady Income DOWN",
     "scenario": "Tactical Momentum",
-    "rationale": "Model identifies a 'Tactical Momentum' scenario. Primary driver is 'nifty_ret', signaling downward pressure with 55.9% conviction. Moderate VIX (18.5) supports standard range-based strategies like Iron Condors."
+    "rationale": "Model identifies a 'Tactical Momentum' scenario. Primary driver is 'nifty_ret', signaling downward pressure with 57.7% conviction. Moderate VIX (18.4) supports standard range-based strategies like Iron Condors."
   }
 }
