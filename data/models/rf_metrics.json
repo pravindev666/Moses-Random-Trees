@@ -1,83 +1,83 @@
 {
-  "last_trained": "2026-07-12 14:28:10",
+  "last_trained": "2026-07-19 14:25:24",
   "search_intensity": "Comprehensive (GridSearch + TimeSeriesSplit)",
   "horizons": {
     "1": {
       "best_params": {
-        "max_depth": 15,
+        "max_depth": 12,
         "max_features": "sqrt",
-        "min_samples_leaf": 30,
-        "n_estimators": 100
+        "min_samples_leaf": 10,
+        "n_estimators": 200
       },
-      "cv_accuracy": 0.5353,
+      "cv_accuracy": 0.5279,
       "regime_scores": {
-        "2019-2021": 0.5175,
-        "2022-2023": 0.4735,
-        "2024-2026": 0.4897
+        "2019-2021": 0.4928,
+        "2022-2023": 0.4571,
+        "2024-2026": 0.5082
       },
-      "top_feature": "pcr_ret",
+      "top_feature": "nifty_ret",
       "model_file": "rf_dir_1d.pkl"
     },
     "3": {
       "best_params": {
         "max_depth": 12,
-        "max_features": 0.6,
-        "min_samples_leaf": 10,
+        "max_features": "sqrt",
+        "min_samples_leaf": 20,
         "n_estimators": 100
       },
-      "cv_accuracy": 0.5353,
+      "cv_accuracy": 0.5409,
       "regime_scores": {
-        "2019-2021": 0.5791,
-        "2022-2023": 0.4816,
-        "2024-2026": 0.5288
+        "2019-2021": 0.5873,
+        "2022-2023": 0.5061,
+        "2024-2026": 0.5329
       },
       "top_feature": "hsi_macd",
       "model_file": "rf_dir_3d.pkl"
     },
     "5": {
       "best_params": {
-        "max_depth": 8,
+        "max_depth": 5,
         "max_features": "sqrt",
         "min_samples_leaf": 30,
-        "n_estimators": 200
+        "n_estimators": 300
       },
-      "cv_accuracy": 0.544,
+      "cv_accuracy": 0.5429,
       "regime_scores": {
-        "2019-2021": 0.5791,
-        "2022-2023": 0.4857,
-        "2024-2026": 0.4877
+        "2019-2021": 0.5811,
+        "2022-2023": 0.502,
+        "2024-2026": 0.4815
       },
       "top_feature": "epi_adx",
       "model_file": "rf_dir_5d.pkl"
     },
     "7": {
       "best_params": {
-        "max_depth": 5,
+        "max_depth": 8,
         "max_features": "sqrt",
-        "min_samples_leaf": 10,
-        "n_estimators": 200
+        "min_samples_leaf": 20,
+        "n_estimators": 300
       },
-      "cv_accuracy": 0.5585,
+      "cv_accuracy": 0.5602,
       "regime_scores": {
-        "2019-2021": 0.5524,
-        "2022-2023": 0.551,
-        "2024-2026": 0.4938
+        "2019-2021": 0.5749,
+        "2022-2023": 0.5265,
+        "2024-2026": 0.4794
       },
       "top_feature": "epi_adx",
       "model_file": "rf_dir_7d.pkl"
     },
     "14": {
       "best_params": {
-        "max_depth": 15,
+        "max_depth": 12,
         "max_features": "sqrt",
-        "min_samples_leaf": 30,
-        "n_estimators": 200
+        "min_samples_leaf": 10,
+        "n_estimators": 100
       },
-      "cv_accuracy": 0.5662,
+      "cv_accuracy": 0.5689,
       "regime_scores": {
-        "2019-2021": 0.6858,
-        "2022-2023": 0.4082,
-        "2024-2026": 0.5144
+        "2019-2021": 0.6776,
+        "2022-2023": 0.3918,
+        "2024-2026": 0.4897
       },
       "top_feature": "vix",
       "model_file": "rf_dir_14d.pkl"
@@ -85,67 +85,67 @@
   },
   "range_model": {
     "best_params": {
-      "max_depth": 8,
+      "max_depth": 12,
       "max_features": 0.6,
       "min_samples_leaf": 30,
       "n_estimators": 150
     },
     "regime_mae_pts": {
-      "2019-2021": 62.3,
+      "2019-2021": 62.2,
       "2022-2023": 58.5,
-      "2024-2026": 78.6
+      "2024-2026": 78.9
     },
     "top_feature": "atr10"
   },
   "todays_prediction": {
-    "date": "2026-07-10",
-    "spot": 24211.650390625,
-    "direction": "UP",
-    "up_prob": 0.527,
-    "down_prob": 0.473,
-    "expected_range_pts": 186.0,
-    "iron_condor_upper": 24350,
-    "iron_condor_lower": 24100,
-    "vix": 12.42,
-    "pcr": 0.75,
-    "inda_ret": -0.0138,
-    "epi_ret": -0.0113,
-    "bn_vs_nifty": 0.0007,
-    "usdinr_vel": 0.075,
-    "rsi": 45.01,
-    "macd_hist": 2.3941,
-    "ema_20_dist": -0.042,
+    "date": "2026-07-17",
+    "spot": 24343.650390625,
+    "direction": "DOWN",
+    "up_prob": 0.45,
+    "down_prob": 0.55,
+    "expected_range_pts": 217.0,
+    "iron_condor_upper": 24500,
+    "iron_condor_lower": 24200,
+    "vix": 13.19,
+    "pcr": 0.85,
+    "inda_ret": -0.0002,
+    "epi_ret": -0.0068,
+    "bn_vs_nifty": -0.0052,
+    "usdinr_vel": 0.923,
+    "rsi": 50.83,
+    "macd_hist": -16.1719,
+    "ema_20_dist": 0.172,
     "horizons": {
       "1": {
-        "direction": "UP",
-        "up_prob": 0.527,
-        "conviction": 0.527
+        "direction": "DOWN",
+        "up_prob": 0.45,
+        "conviction": 0.55
       },
       "3": {
         "direction": "DOWN",
-        "up_prob": 0.321,
-        "conviction": 0.679
+        "up_prob": 0.445,
+        "conviction": 0.555
       },
       "5": {
         "direction": "DOWN",
-        "up_prob": 0.425,
-        "conviction": 0.575
+        "up_prob": 0.384,
+        "conviction": 0.616
       },
       "7": {
         "direction": "DOWN",
-        "up_prob": 0.38,
-        "conviction": 0.62
+        "up_prob": 0.327,
+        "conviction": 0.673
       },
       "14": {
         "direction": "DOWN",
-        "up_prob": 0.324,
-        "conviction": 0.676
+        "up_prob": 0.196,
+        "conviction": 0.804
       }
     },
-    "recommended_strategy": "No Trade",
-    "recommended_strikes": "Side-lines (Waiting for Confirmation)",
-    "strategy_tag": "Low Conviction",
-    "scenario": "Range Bound / Neutral",
-    "rationale": "Model identifies a 'Range Bound / Neutral' scenario. Primary driver is 'pcr_ret', signaling upward pressure with 52.7% conviction. Low VIX (12.4) indicates a calm environment; directional spreads may yield better risk/reward."
+    "recommended_strategy": "Bear Call Spread",
+    "recommended_strikes": "Sell 24500 CE, Buy 24600 CE",
+    "strategy_tag": "Steady Income DOWN",
+    "scenario": "Tactical Momentum",
+    "rationale": "Model identifies a 'Tactical Momentum' scenario. Primary driver is 'nifty_ret', signaling downward pressure with 55.0% conviction. Low VIX (13.2) indicates a calm environment; directional spreads may yield better risk/reward."
   }
 }
