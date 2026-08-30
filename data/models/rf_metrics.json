@@ -1,34 +1,34 @@
 {
-  "last_trained": "2026-08-23 13:33:36",
+  "last_trained": "2026-08-30 17:13:13",
   "search_intensity": "Comprehensive (GridSearch + TimeSeriesSplit)",
   "horizons": {
     "1": {
       "best_params": {
-        "max_depth": 5,
+        "max_depth": 8,
         "max_features": "sqrt",
         "min_samples_leaf": 10,
-        "n_estimators": 100
+        "n_estimators": 300
       },
-      "cv_accuracy": 0.5196,
+      "cv_accuracy": 0.5227,
       "regime_scores": {
-        "2019-2021": 0.4867,
-        "2022-2023": 0.4612,
-        "2024-2026": 0.4877
+        "2019-2021": 0.5092,
+        "2022-2023": 0.4571,
+        "2024-2026": 0.4938
       },
       "top_feature": "nifty_ret",
       "model_file": "rf_dir_1d.pkl"
     },
     "3": {
       "best_params": {
-        "max_depth": 12,
+        "max_depth": 8,
         "max_features": "sqrt",
-        "min_samples_leaf": 20,
-        "n_estimators": 300
+        "min_samples_leaf": 30,
+        "n_estimators": 200
       },
-      "cv_accuracy": 0.5339,
+      "cv_accuracy": 0.5393,
       "regime_scores": {
-        "2019-2021": 0.5996,
-        "2022-2023": 0.502,
+        "2019-2021": 0.5914,
+        "2022-2023": 0.5551,
         "2024-2026": 0.5082
       },
       "top_feature": "hsi_macd",
@@ -36,116 +36,116 @@
     },
     "5": {
       "best_params": {
-        "max_depth": 15,
+        "max_depth": 12,
         "max_features": "sqrt",
-        "min_samples_leaf": 20,
-        "n_estimators": 200
+        "min_samples_leaf": 30,
+        "n_estimators": 300
       },
-      "cv_accuracy": 0.5497,
+      "cv_accuracy": 0.5374,
       "regime_scores": {
-        "2019-2021": 0.5749,
-        "2022-2023": 0.5224,
-        "2024-2026": 0.5041
+        "2019-2021": 0.5852,
+        "2022-2023": 0.4776,
+        "2024-2026": 0.4691
       },
       "top_feature": "inda_adx",
       "model_file": "rf_dir_5d.pkl"
     },
     "7": {
       "best_params": {
-        "max_depth": 12,
+        "max_depth": 8,
         "max_features": "sqrt",
-        "min_samples_leaf": 10,
-        "n_estimators": 100
+        "min_samples_leaf": 20,
+        "n_estimators": 200
       },
-      "cv_accuracy": 0.5716,
+      "cv_accuracy": 0.5565,
       "regime_scores": {
-        "2019-2021": 0.5606,
-        "2022-2023": 0.5429,
-        "2024-2026": 0.4918
+        "2019-2021": 0.5708,
+        "2022-2023": 0.5388,
+        "2024-2026": 0.4733
       },
-      "top_feature": "epi_adx",
+      "top_feature": "inda_adx",
       "model_file": "rf_dir_7d.pkl"
     },
     "14": {
       "best_params": {
-        "max_depth": 8,
+        "max_depth": 5,
         "max_features": "sqrt",
-        "min_samples_leaf": 10,
-        "n_estimators": 200
+        "min_samples_leaf": 20,
+        "n_estimators": 100
       },
-      "cv_accuracy": 0.575,
+      "cv_accuracy": 0.5732,
       "regime_scores": {
-        "2019-2021": 0.6674,
-        "2022-2023": 0.4367,
-        "2024-2026": 0.4938
+        "2019-2021": 0.6509,
+        "2022-2023": 0.4082,
+        "2024-2026": 0.5144
       },
-      "top_feature": "vix",
+      "top_feature": "inda_adx",
       "model_file": "rf_dir_14d.pkl"
     }
   },
   "range_model": {
     "best_params": {
-      "max_depth": 8,
+      "max_depth": 15,
       "max_features": 0.6,
       "min_samples_leaf": 30,
       "n_estimators": 150
     },
     "regime_mae_pts": {
-      "2019-2021": 62.3,
+      "2019-2021": 62.2,
       "2022-2023": 58.5,
-      "2024-2026": 78.6
+      "2024-2026": 78.9
     },
     "top_feature": "atr10"
   },
   "todays_prediction": {
-    "date": "2026-08-21",
-    "spot": 24252.0,
-    "direction": "UP",
-    "up_prob": 0.506,
-    "down_prob": 0.494,
-    "expected_range_pts": 131.0,
-    "iron_condor_upper": 24350,
-    "iron_condor_lower": 24150,
-    "vix": 10.95,
+    "date": "2026-08-28",
+    "spot": 24175.650390625,
+    "direction": "DOWN",
+    "up_prob": 0.473,
+    "down_prob": 0.527,
+    "expected_range_pts": 148.0,
+    "iron_condor_upper": 24300,
+    "iron_condor_lower": 24050,
+    "vix": 10.68,
     "pcr": 0.75,
-    "inda_ret": 0.0032,
-    "epi_ret": 0.004,
-    "bn_vs_nifty": -0.0003,
-    "usdinr_vel": 0.265,
-    "rsi": 44.91,
-    "macd_hist": -54.095,
-    "ema_20_dist": -0.298,
+    "inda_ret": -0.0019,
+    "epi_ret": -0.0043,
+    "bn_vs_nifty": -0.0038,
+    "usdinr_vel": -0.102,
+    "rsi": 27.88,
+    "macd_hist": -39.5283,
+    "ema_20_dist": -0.733,
     "horizons": {
       "1": {
-        "direction": "UP",
-        "up_prob": 0.506,
-        "conviction": 0.506
+        "direction": "DOWN",
+        "up_prob": 0.473,
+        "conviction": 0.527
       },
       "3": {
         "direction": "DOWN",
-        "up_prob": 0.405,
-        "conviction": 0.595
+        "up_prob": 0.43,
+        "conviction": 0.57
       },
       "5": {
         "direction": "DOWN",
-        "up_prob": 0.321,
-        "conviction": 0.679
+        "up_prob": 0.416,
+        "conviction": 0.584
       },
       "7": {
         "direction": "DOWN",
-        "up_prob": 0.267,
-        "conviction": 0.733
+        "up_prob": 0.344,
+        "conviction": 0.656
       },
       "14": {
         "direction": "DOWN",
-        "up_prob": 0.278,
-        "conviction": 0.722
+        "up_prob": 0.348,
+        "conviction": 0.652
       }
     },
-    "recommended_strategy": "Iron Condor",
-    "recommended_strikes": "Sell 24350 CE & 24150 PE",
-    "strategy_tag": "Range Bound",
+    "recommended_strategy": "No Trade",
+    "recommended_strikes": "Side-lines (Waiting for Confirmation)",
+    "strategy_tag": "Low Conviction",
     "scenario": "Range Bound / Neutral",
-    "rationale": "Model identifies a 'Range Bound / Neutral' scenario. Primary driver is 'nifty_ret', signaling upward pressure with 50.6% conviction. Low VIX (10.9) indicates a calm environment; directional spreads may yield better risk/reward."
+    "rationale": "Model identifies a 'Range Bound / Neutral' scenario. Primary driver is 'nifty_ret', signaling downward pressure with 52.7% conviction. Low VIX (10.7) indicates a calm environment; directional spreads may yield better risk/reward."
   }
 }
